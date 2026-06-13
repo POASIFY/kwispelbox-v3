@@ -61,12 +61,10 @@
       <!-- Acties rechts -->
       <div class="site-header__actions">
         {%- if shop.customer_accounts_enabled -%}
-          <shopify-account menu="{{ section.settings.customer_account_menu }}" class="site-header__account">
-            <a href="{{ routes.account_url }}" class="site-header__action-btn">
-              <span class="site-header__action-icon" aria-hidden="true">{{- 'icon-account.svg' | inline_asset_content -}}</span>
-              <span class="site-header__action-label">Mijn account</span>
-            </a>
-          </shopify-account>
+          <a href="{{ routes.account_url }}" class="site-header__action-btn">
+            <span class="site-header__action-icon" aria-hidden="true">{{- 'icon-account.svg' | inline_asset_content -}}</span>
+            <span class="site-header__action-label">Mijn account</span>
+          </a>
         {%- endif -%}
         <a href="{{ routes.cart_url }}" class="site-header__action-btn site-header__cart-btn"
            aria-label="Winkelwagen, {{ cart.item_count }} items">
