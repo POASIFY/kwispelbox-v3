@@ -126,9 +126,7 @@
                                 {%- for child in dd.settings.link_list.links -%}
                                   <li>
                                     <a href="{{ child.url }}" class="dd-verr__extra-link">
-                                      <span class="dd-verr__link-icon-sm dd-verr__link-icon-sm--{{ dd.settings.accent_color }}" aria-hidden="true">
-                                        {{- 'icon-gift.svg' | inline_asset_content -}}
-                                      </span>
+                                      <span class="dd-verr__dot dd-verr__dot--{{ dd.settings.accent_color }}" aria-hidden="true"></span>
                                       <span>{{ child.title }}</span>
                                       <svg class="dd-verr__chevron" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
                                     </a>
@@ -160,9 +158,7 @@
                                       <li>
                                         <a href="{{ child.url }}" class="dd-verr__col-link">
                                           {%- if cb.settings.show_link_icons -%}
-                                            <span class="dd-verr__link-icon-sm dd-verr__link-icon-sm--{{ cb.settings.color }}" aria-hidden="true">
-                                              {{- cb.settings.icon | inline_asset_content -}}
-                                            </span>
+                                            <span class="dd-verr__dot dd-verr__dot--{{ cb.settings.color }}" aria-hidden="true"></span>
                                           {%- endif -%}
                                           <span>{{ child.title }}</span>
                                           <svg class="dd-verr__chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
@@ -983,9 +979,12 @@
 .dd-verr__col-link:hover{background:var(--color-cream);}
 .dd-verr__col-link:hover .dd-verr__chevron{opacity:.8;transform:translateX(2px);}
 .dd-verr__col-link span{flex:1;}.dd-verr__col-link .dd-verr__chevron{margin-left:auto;}
-.dd-verr__link-icon-sm{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.dd-verr__link-icon-sm svg{width:14px;height:14px;}
-.dd-verr__link-icon-sm--green{background:#e8f5e2;color:var(--color-green);}.dd-verr__link-icon-sm--ink{background:var(--color-cream);color:var(--color-ink);}
+.dd-verr__dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;display:inline-block;}
+.dd-verr__dot--green{background:var(--color-green);}
+.dd-verr__dot--pink{background:var(--color-pink);}
+.dd-verr__dot--orange{background:var(--color-orange);}
+.dd-verr__dot--yellow{background:var(--color-yellow);}
+.dd-verr__dot--ink{background:var(--color-ink);}
 .dd-verr__link-icon-sm--pink{background:#ffe0ee;color:var(--color-pink);}
 .dd-verr__link-icon-sm--orange{background:#fff0e4;color:var(--color-orange);}
 .dd-verr__link-icon-sm--yellow{background:#fffae0;color:var(--color-yellow);}
