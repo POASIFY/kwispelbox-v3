@@ -1,11 +1,57 @@
 {
   "type": "header",
-  "name": "Koptekst",
+  "name": "Navigatie",
   "sections": {
+    "announcement-bar": {
+      "type": "announcement-bar",
+      "blocks": {
+        "msg-1": {
+          "type": "message",
+          "settings": {
+            "text": "Vandaag besteld, morgen in huis",
+            "icon": "icon-truck.svg"
+          }
+        },
+        "msg-2": {
+          "type": "message",
+          "settings": {
+            "text": "Gratis verzending vanaf €75",
+            "icon": "icon-gift.svg"
+          }
+        },
+        "msg-3": {
+          "type": "message",
+          "settings": {
+            "text": "100% blije honden garantie",
+            "icon": "icon-heart.svg"
+          }
+        },
+        "msg-4": {
+          "type": "message",
+          "settings": {
+            "text": "Klanten beoordelen ons met 4,9/5",
+            "icon": "icon-star.svg"
+          }
+        }
+      },
+      "block_order": [
+        "msg-1",
+        "msg-2",
+        "msg-3",
+        "msg-4"
+      ],
+      "settings": {
+        "rotation_interval": 4,
+        "show_arrows": true
+      }
+    },
     "header": {
       "type": "header",
       "settings": {}
     }
   },
-  "order": ["header"]
+  "order": [
+    "announcement-bar",
+    "header"
+  ]
 }
