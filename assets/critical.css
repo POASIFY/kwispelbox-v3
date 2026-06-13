@@ -117,10 +117,8 @@ body {
 }
 
 
-/* Header section group: sections zijn altijd full-width */
-.shopify-section-group--header-group .shopify-section,
-.shopify-section-group--header-group .shopify-section > * {
+/* Header/announcement: shopify-section grid uitschakelen */
+.shopify-section-group-header-group {
   display: block;
   width: 100%;
-  grid-column: unset;
 }
