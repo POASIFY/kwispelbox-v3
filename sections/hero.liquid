@@ -14,8 +14,10 @@
 {%- endif -%}
 
 {%- assign layout = section.settings.layout -%}
-{%- assign has_image = section.settings.image != blank -%}
-{%- assign has_mobile_image = section.settings.mobile_image != blank -%}
+{%- assign has_image = false -%}
+{%- if section.settings.image != blank -%}{%- assign has_image = true -%}{%- endif -%}
+{%- assign has_mobile_image = false -%}
+{%- if section.settings.mobile_image != blank -%}{%- assign has_mobile_image = true -%}{%- endif -%}
 
 <div class="hero hero--{{ layout }}{% if section.settings.full_width %} full-width{% endif %}"
      data-section-id="{{ section.id }}">
