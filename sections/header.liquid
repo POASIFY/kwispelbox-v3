@@ -1,6 +1,5 @@
 {%- comment -%}sections/header.liquid — Kwispelbox KB-v3{%- endcomment -%}
 
-{%- assign nav_chip_blocks = section.blocks | where: 'type', 'nav_chip' -%}
 {%- assign trust_blocks    = section.blocks | where: 'type', 'trust_item' -%}
 
 <div class="site-header__wrapper">
@@ -80,20 +79,36 @@
     </div>
   </header>
 
-  {%- if nav_chip_blocks.size > 0 or trust_blocks.size > 0 -%}
+  {%- if section.settings.menu != blank or trust_blocks.size > 0 -%}
     <nav class="site-header__nav" aria-label="Hoofdnavigatie">
       <div class="site-header__nav-inner">
-        {%- if nav_chip_blocks.size > 0 -%}
+        {%- if section.settings.menu != blank -%}
           <ul class="site-header__chips" role="list">
-            {%- for block in nav_chip_blocks -%}
-              <li {{ block.shopify_attributes }}>
-                <a href="{{ block.settings.url }}" class="site-header__chip site-header__chip--{{ block.settings.color }}"
-                   {% if block.settings.url == request.path %}aria-current="page"{% endif %}>
-                  {%- if block.settings.icon != blank -%}
-                    <span class="site-header__chip-icon" aria-hidden="true">{{- block.settings.icon | inline_asset_content -}}</span>
+            {%- for link in section.settings.menu.links -%}
+              <li class="site-header__chip-item{% if link.links.size > 0 %} site-header__chip-item--has-dropdown{% endif %}">
+                <a href="{{ link.url }}"
+                   class="site-header__chip"
+                   {% if link.active %}aria-current="page"{% endif %}
+                   {% if link.links.size > 0 %}aria-haspopup="true" aria-expanded="false"{% endif %}>
+                  {{ link.title }}
+                  {%- if link.links.size > 0 -%}
+                    <span class="site-header__chip-chevron" aria-hidden="true">
+                      {{- 'icon-chevron-down.svg' | inline_asset_content -}}
+                    </span>
                   {%- endif -%}
-                  {{ block.settings.label }}
                 </a>
+                {%- if link.links.size > 0 -%}
+                  <ul class="site-header__dropdown" role="list" aria-label="{{ link.title }}">
+                    {%- for child in link.links -%}
+                      <li>
+                        <a href="{{ child.url }}" class="site-header__dropdown-link"
+                           {% if child.active %}aria-current="page"{% endif %}>
+                          {{ child.title }}
+                        </a>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                {%- endif -%}
               </li>
             {%- endfor -%}
           </ul>
@@ -182,7 +197,7 @@
 .site-header__visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;}
 .site-header__wrapper{position:sticky;top:0;z-index:100;background:#fff;box-shadow:0 1px 0 var(--color-line);}
 .site-header{background:#fff;}
-.site-header__inner{max-width:var(--page-width);margin:0 auto;padding:0 var(--page-margin);height:72px;display:flex;align-items:center;gap:16px;}
+.site-header__inner{max-width:var(--page-width);margin:0 auto;padding:0 var(--page-margin);height:64px;display:flex;align-items:center;gap:12px;}@media(min-width:750px){.site-header__inner{height:72px;gap:16px;}}
 .site-header__burger{display:flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:4px;color:var(--color-ink);flex-shrink:0;}
 .site-header__burger svg{width:24px;height:24px;}
 @media(min-width:990px){.site-header__burger{display:none;}}
@@ -200,8 +215,8 @@
 .site-header__search-input::placeholder{color:var(--color-muted);}
 .site-header__search-clear{display:flex;align-items:center;background:none;border:none;cursor:pointer;padding:2px;color:var(--color-muted);}
 .site-header__search-clear svg{width:14px;height:14px;}
-.site-header__search-btn{height:44px;padding:0 20px;background:var(--color-orange);color:#fff;border:none;border-radius:var(--radius-pill);font-family:var(--font-heading);font-size:.9rem;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:background 160ms;}
-.site-header__search-btn:hover{background:#d9823a;}
+.site-header__search-btn{height:44px;padding:0 20px;background:var(--color-green);color:#fff;border:none;border-radius:var(--radius-pill);font-family:var(--font-heading);font-size:.9rem;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:background 160ms;}
+.site-header__search-btn:hover{background:#4d8833;}
 .site-header__search-results{position:absolute;top:calc(100% + 8px);left:0;right:0;background:#fff;border:1.5px solid var(--color-line);border-radius:var(--radius-md);box-shadow:0 8px 24px rgba(0,0,0,.08);overflow:hidden;z-index:200;}
 .search-result-item{display:flex;align-items:center;gap:12px;padding:10px 16px;text-decoration:none;color:var(--color-ink);border-bottom:1px solid var(--color-line);transition:background 120ms;}
 .search-result-item:last-child{border-bottom:none;}
@@ -254,7 +269,7 @@
 .header-drawer__search-field{flex:1;display:flex;align-items:center;gap:8px;background:var(--color-cream);border-radius:var(--radius-pill);border:1.5px solid var(--color-line);padding:0 12px;}
 .header-drawer__search-field svg{width:16px;height:16px;color:var(--color-muted);flex-shrink:0;}
 .header-drawer__search-input{flex:1;height:40px;background:none;border:none;outline:none;font-family:var(--font-body);font-size:.9rem;color:var(--color-ink);min-width:0;}
-.header-drawer__search-btn{height:40px;padding:0 16px;background:var(--color-orange);color:#fff;border:none;border-radius:var(--radius-pill);font-family:var(--font-heading);font-size:.85rem;cursor:pointer;flex-shrink:0;}
+.header-drawer__search-btn{height:40px;padding:0 16px;background:var(--color-green);color:#fff;border:none;border-radius:var(--radius-pill);font-family:var(--font-heading);font-size:.85rem;cursor:pointer;flex-shrink:0;}
 .header-drawer__nav{list-style:none;margin:0;padding:8px 0;flex:1;}
 .header-drawer__nav-item{border-bottom:1px solid var(--color-line);}
 .header-drawer__nav-link{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;text-decoration:none;font-family:var(--font-body);font-size:1rem;font-weight:700;color:var(--color-ink);transition:background 120ms;}
@@ -268,6 +283,43 @@
 .header-drawer__account-link svg{width:18px;height:18px;}
 .header-drawer__overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:299;opacity:0;visibility:hidden;transition:opacity 280ms,visibility 280ms;}
 .header-drawer__overlay[aria-hidden="false"]{opacity:1;visibility:visible;}
+
+/* ── Nav chevron ──────────────────────────────────────────── */
+.site-header__chip-chevron{display:inline-flex;align-items:center;margin-left:2px;transition:transform 200ms ease;}
+.site-header__chip-chevron svg{width:12px;height:12px;}
+.site-header__chip-item--has-dropdown:hover .site-header__chip-chevron,
+.site-header__chip-item--has-dropdown:focus-within .site-header__chip-chevron{transform:rotate(180deg);}
+
+/* ── Dropdown ─────────────────────────────────────────────── */
+.site-header__chip-item{position:relative;}
+.site-header__dropdown{
+  position:absolute;top:calc(100% + 8px);left:0;
+  background:#fff;
+  border:1.5px solid var(--color-line);
+  border-radius:var(--radius-md);
+  box-shadow:0 8px 24px rgba(0,0,0,.08);
+  min-width:200px;
+  list-style:none;margin:0;padding:6px 0;
+  z-index:200;
+  opacity:0;visibility:hidden;
+  transform:translateY(-6px);
+  transition:opacity 180ms ease,visibility 180ms ease,transform 180ms ease;
+  pointer-events:none;
+}
+.site-header__chip-item--has-dropdown:hover .site-header__dropdown,
+.site-header__chip-item--has-dropdown:focus-within .site-header__dropdown{
+  opacity:1;visibility:visible;transform:translateY(0);pointer-events:auto;
+}
+.site-header__dropdown-link{
+  display:block;padding:9px 16px;
+  font-family:var(--font-body);font-size:.85rem;font-weight:600;
+  color:var(--color-ink);text-decoration:none;
+  transition:background 120ms,color 120ms;
+  white-space:nowrap;
+}
+.site-header__dropdown-link:hover,.site-header__dropdown-link[aria-current="page"]{
+  background:var(--color-cream);color:var(--color-orange);
+}
 {% endstylesheet %}
 
 {% javascript %}
@@ -330,78 +382,182 @@
 }());
 {% endjavascript %}
 
-{% schema %}
-{
+{% schema %}{
   "name": "Header",
   "blocks": [
     {
-      "type": "nav_chip", "name": "Navigatie chip", "limit": 8,
+      "type": "trust_item",
+      "name": "Trust item",
+      "limit": 4,
       "settings": [
-        { "type": "text",   "id": "label", "label": "Label", "default": "Boxen" },
-        { "type": "url",    "id": "url",   "label": "Link" },
-        { "type": "select", "id": "icon",  "label": "Icoon", "default": "icon-gift.svg",
-          "options": [
-            {"value":"icon-gift.svg","label":"Cadeau"},{"value":"icon-heart.svg","label":"Hart"},
-            {"value":"icon-paw.svg","label":"Poot"},{"value":"icon-star.svg","label":"Ster"},
-            {"value":"icon-truck.svg","label":"Vrachtwagen"},{"value":"icon-shield.svg","label":"Schild"},
-            {"value":"","label":"Geen icoon"}
-          ]
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Titel",
+          "default": "Snelle levering"
         },
-        { "type": "select", "id": "color", "label": "Kleur", "default": "default",
+        {
+          "type": "text",
+          "id": "subtitle",
+          "label": "Subtitel",
+          "default": "1-2 werkdagen"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Link (optioneel)"
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icoon",
+          "default": "icon-truck.svg",
           "options": [
-            {"value":"default","label":"Standaard"},{"value":"green","label":"Groen"},
-            {"value":"orange","label":"Oranje"},{"value":"pink","label":"Roze"},{"value":"yellow","label":"Geel"}
-          ]
-        }
-      ]
-    },
-    {
-      "type": "trust_item", "name": "Trust item", "limit": 4,
-      "settings": [
-        { "type": "text",   "id": "title",    "label": "Titel",    "default": "Snelle levering" },
-        { "type": "text",   "id": "subtitle", "label": "Subtitel", "default": "1-2 werkdagen" },
-        { "type": "url",    "id": "url",      "label": "Link (optioneel)" },
-        { "type": "select", "id": "icon",     "label": "Icoon", "default": "icon-truck.svg",
-          "options": [
-            {"value":"icon-truck.svg","label":"Vrachtwagen"},{"value":"icon-heart.svg","label":"Hart"},
-            {"value":"icon-shield.svg","label":"Schild"},{"value":"icon-refresh.svg","label":"Terugkeer"},
-            {"value":"icon-star.svg","label":"Ster"},{"value":"icon-paw.svg","label":"Poot"}
+            {
+              "value": "icon-truck.svg",
+              "label": "Vrachtwagen"
+            },
+            {
+              "value": "icon-heart.svg",
+              "label": "Hart"
+            },
+            {
+              "value": "icon-shield.svg",
+              "label": "Schild"
+            },
+            {
+              "value": "icon-refresh.svg",
+              "label": "Terugkeer"
+            },
+            {
+              "value": "icon-star.svg",
+              "label": "Ster"
+            },
+            {
+              "value": "icon-paw.svg",
+              "label": "Poot"
+            }
           ]
         }
       ]
     }
   ],
   "settings": [
-    { "type": "header",       "content": "Logo" },
-    { "type": "image_picker", "id": "logo",       "label": "Logo afbeelding" },
-    { "type": "range",        "id": "logo_width", "label": "Logo breedte (px)", "min": 60, "max": 200, "step": 4, "unit": "px", "default": 140 },
-    { "type": "header",       "content": "Navigatie" },
-    { "type": "link_list",    "id": "menu",                  "label": "Hoofdmenu",    "default": "main-menu" },
-    { "type": "link_list",    "id": "customer_account_menu", "label": "Account menu", "default": "customer-account-main-menu" },
-    { "type": "header",       "content": "Zoeken" },
-    { "type": "checkbox",     "id": "show_search",          "label": "Zoekbalk tonen",    "default": true },
-    { "type": "text",         "id": "search_placeholder",   "label": "Placeholder tekst", "default": "Zoek naar speeltjes, boxen..." },
-    { "type": "text",         "id": "search_button_label",  "label": "Zoekknop tekst",    "default": "Zoeken" },
-    { "type": "header",       "content": "Account en winkelwagen" },
-    { "type": "checkbox",     "id": "show_account_label",   "label": "Account label tonen",      "default": true },
-    { "type": "text",         "id": "account_label",        "label": "Account label",            "default": "Mijn account" },
-    { "type": "checkbox",     "id": "show_cart_label",      "label": "Winkelwagen label tonen",  "default": true },
-    { "type": "text",         "id": "cart_label",           "label": "Winkelwagen label",        "default": "Winkelwagen" }
+    {
+      "type": "header",
+      "content": "Logo"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo afbeelding"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "label": "Logo breedte (px)",
+      "min": 60,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 140
+    },
+    {
+      "type": "header",
+      "content": "Navigatie"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Hoofdmenu",
+      "default": "main-menu"
+    },
+    {
+      "type": "link_list",
+      "id": "customer_account_menu",
+      "label": "Account menu",
+      "default": "customer-account-main-menu"
+    },
+    {
+      "type": "header",
+      "content": "Zoeken"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "Zoekbalk tonen",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "search_placeholder",
+      "label": "Placeholder tekst",
+      "default": "Zoek naar speeltjes, boxen..."
+    },
+    {
+      "type": "text",
+      "id": "search_button_label",
+      "label": "Zoekknop tekst",
+      "default": "Zoeken"
+    },
+    {
+      "type": "header",
+      "content": "Account en winkelwagen"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_account_label",
+      "label": "Account label tonen",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "account_label",
+      "label": "Account label",
+      "default": "Mijn account"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cart_label",
+      "label": "Winkelwagen label tonen",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "cart_label",
+      "label": "Winkelwagen label",
+      "default": "Winkelwagen"
+    }
   ],
   "presets": [
     {
       "name": "Header",
       "blocks": [
-        {"type":"nav_chip",   "settings":{"label":"Boxen",        "url":"/collections/boxen",       "icon":"icon-gift.svg",   "color":"green"}},
-        {"type":"nav_chip",   "settings":{"label":"Speeltjes",    "url":"/collections/speeltjes",   "icon":"icon-paw.svg",    "color":"orange"}},
-        {"type":"nav_chip",   "settings":{"label":"Voor puppy's", "url":"/collections/puppy",       "icon":"icon-heart.svg",  "color":"pink"}},
-        {"type":"nav_chip",   "settings":{"label":"Cadeaus",      "url":"/collections/cadeaus",     "icon":"icon-gift.svg",   "color":"default"}},
-        {"type":"nav_chip",   "settings":{"label":"Bestsellers",  "url":"/collections/bestsellers", "icon":"icon-star.svg",   "color":"yellow"}},
-        {"type":"trust_item", "settings":{"title":"Snelle levering", "subtitle":"1-2 werkdagen",   "icon":"icon-truck.svg"}},
-        {"type":"trust_item", "settings":{"title":"Niet goed?",      "subtitle":"Geld terug",       "icon":"icon-refresh.svg"}},
-        {"type":"trust_item", "settings":{"title":"Veilig betalen",  "subtitle":"100% veilig",      "icon":"icon-shield.svg"}}
+        {
+          "type": "trust_item",
+          "settings": {
+            "title": "Snelle levering",
+            "subtitle": "1-2 werkdagen",
+            "icon": "icon-truck.svg"
+          }
+        },
+        {
+          "type": "trust_item",
+          "settings": {
+            "title": "Niet goed?",
+            "subtitle": "Geld terug",
+            "icon": "icon-refresh.svg"
+          }
+        },
+        {
+          "type": "trust_item",
+          "settings": {
+            "title": "Veilig betalen",
+            "subtitle": "100% veilig",
+            "icon": "icon-shield.svg"
+          }
+        }
       ]
     }
   ]
-}
-{% endschema %}
+}{% endschema %}
