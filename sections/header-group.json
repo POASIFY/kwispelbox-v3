@@ -5,28 +5,28 @@
     "announcement-bar": {
       "type": "announcement-bar",
       "blocks": {
-        "msg-1": {
+        "m1": {
           "type": "message",
           "settings": {
             "text": "Vandaag besteld, morgen in huis",
             "icon": "icon-truck.svg"
           }
         },
-        "msg-2": {
+        "m2": {
           "type": "message",
           "settings": {
             "text": "Gratis verzending vanaf €75",
             "icon": "icon-gift.svg"
           }
         },
-        "msg-3": {
+        "m3": {
           "type": "message",
           "settings": {
             "text": "100% blije honden garantie",
             "icon": "icon-heart.svg"
           }
         },
-        "msg-4": {
+        "m4": {
           "type": "message",
           "settings": {
             "text": "Klanten beoordelen ons met 4,9/5",
@@ -35,14 +35,15 @@
         }
       },
       "block_order": [
-        "msg-1",
-        "msg-2",
-        "msg-3",
-        "msg-4"
+        "m1",
+        "m2",
+        "m3",
+        "m4"
       ],
       "settings": {
         "rotation_interval": 4,
-        "show_arrows": true
+        "show_arrows": true,
+        "marquee_speed": 30
       }
     },
     "header": {
