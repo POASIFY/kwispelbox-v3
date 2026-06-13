@@ -19,7 +19,7 @@
     "update": "Update",
     "remove": "Remove",
     "general": {
-      "title": "Winkelwagen"
+      "title": "Cart"
     }
   },
   "customers": {
@@ -54,14 +54,21 @@
   },
   "accessibility": {
     "open_menu": "Open menu",
-    "open_cart": "Open winkelwagen"
+    "open_cart": "Open cart",
+    "skip_to_content": "Skip to content"
   },
   "customer": {
     "account": {
-      "title": "Mijn account"
+      "title": "My account"
     },
     "login": {
-      "title": "Inloggen"
+      "title": "Log in"
+    }
+  },
+  "general": {
+    "meta": {
+      "tags": "Tagged with %{tags}",
+      "page": "Page %{page}"
     }
   }
 }
