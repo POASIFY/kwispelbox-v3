@@ -630,27 +630,71 @@
 
 <!-- ══ MOBIEL DRAWER ════════════════════════════════════ -->
 <div class="header-drawer" id="header-drawer" role="dialog" aria-modal="true" aria-label="Navigatiemenu" aria-hidden="true">
+
+  <!-- Header -->
   <div class="header-drawer__header">
-    <span class="header-drawer__title">Menu</span>
-    <button class="header-drawer__close" aria-label="Sluiten" data-drawer-close>{{- 'icon-close.svg' | inline_asset_content -}}</button>
-  </div>
-  <form action="{{ routes.search_url }}" method="get" role="search" class="header-drawer__search">
-    <input type="hidden" name="type" value="product">
-    <label for="drawer-search" class="site-header__sr-only">Zoeken</label>
-    <div class="header-drawer__search-field">
-      <span aria-hidden="true">{{- 'icon-search.svg' | inline_asset_content -}}</span>
-      <input type="search" id="drawer-search" name="q" class="header-drawer__search-input" placeholder="{{ section.settings.search_placeholder }}" autocomplete="off">
+    <a href="{{ routes.root_url }}" class="header-drawer__logo" aria-label="{{ shop.name }}">
+      {%- if section.settings.logo != blank -%}
+        <img src="{{ section.settings.logo | image_url: width: 300 }}"
+             alt="{{ section.settings.logo.alt | default: shop.name | escape }}"
+             width="120" height="auto" loading="lazy" class="header-drawer__logo-img">
+      {%- else -%}
+        <span class="header-drawer__logo-text">{{ shop.name }}</span>
+      {%- endif -%}
+    </a>
+    <div class="header-drawer__header-actions">
+      {%- if shop.customer_accounts_enabled -%}
+        <a href="{{ routes.account_url }}" class="header-drawer__icon-btn" aria-label="Account">
+          {{- 'icon-account.svg' | inline_asset_content -}}
+        </a>
+      {%- endif -%}
+      <a href="{{ routes.cart_url }}" class="header-drawer__icon-btn header-drawer__cart-btn" aria-label="Winkelwagen">
+        {{- 'icon-cart.svg' | inline_asset_content -}}
+        {%- if cart.item_count > 0 -%}
+          <span class="header-drawer__cart-count" aria-hidden="true">{{ cart.item_count }}</span>
+        {%- endif -%}
+      </a>
+      <button class="header-drawer__close" aria-label="Sluiten" data-drawer-close>
+        {{- 'icon-close.svg' | inline_asset_content -}}
+      </button>
     </div>
-    <button type="submit" class="header-drawer__search-btn">{{ section.settings.search_button_label }}</button>
-  </form>
-  <nav aria-label="Mobiel menu">
+  </div>
+
+  <!-- Trust bar -->
+  {%- assign trust_blocks_drawer = section.blocks | where: 'type', 'trust_item' -%}
+  {%- if trust_blocks_drawer.size > 0 -%}
+    <div class="header-drawer__trust">
+      {%- for block in trust_blocks_drawer limit: 3 -%}
+        <div class="header-drawer__trust-item">
+          <span class="header-drawer__trust-icon" aria-hidden="true">{{- block.settings.icon | inline_asset_content -}}</span>
+          <span class="header-drawer__trust-text">{{ block.settings.title }}{%- if block.settings.subtitle != blank -%} {{ block.settings.subtitle }}{%- endif -%}</span>
+        </div>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+
+  <!-- Navigatie -->
+  <nav aria-label="Mobiel menu" class="header-drawer__nav-wrap">
     <ul class="header-drawer__nav" role="list">
       {%- for link in section.settings.menu.links -%}
+        {%- assign nav_lx = forloop.index -%}
         <li class="header-drawer__nav-item{% if link.links.size > 0 %} header-drawer__nav-item--has-sub{% endif %}">
           <div class="header-drawer__nav-row">
+            <span class="header-drawer__nav-icon header-drawer__nav-icon--{% if nav_lx == 1 %}green{% elsif nav_lx == 2 %}pink{% elsif nav_lx == 3 %}green{% elsif nav_lx == 4 %}orange{% else %}orange{% endif %}" aria-hidden="true">
+              {%- if nav_lx == 1 -%}{{- 'icon-gift.svg' | inline_asset_content -}}
+              {%- elsif nav_lx == 2 -%}{{- 'icon-gift.svg' | inline_asset_content -}}
+              {%- elsif nav_lx == 3 -%}{{- 'icon-bone.svg' | inline_asset_content -}}
+              {%- elsif nav_lx == 4 -%}{{- 'icon-paw.svg' | inline_asset_content -}}
+              {%- else -%}{{- 'icon-heart.svg' | inline_asset_content -}}
+              {%- endif -%}
+            </span>
             <a href="{{ link.url }}" class="header-drawer__nav-link" {% if link.active %}aria-current="page"{% endif %}>{{ link.title }}</a>
             {%- if link.links.size > 0 -%}
-              <button class="header-drawer__sub-toggle" aria-expanded="false" aria-label="{{ link.title }} submenu">{{- 'icon-chevron-down.svg' | inline_asset_content -}}</button>
+              <button class="header-drawer__sub-toggle" aria-expanded="false" aria-label="{{ link.title }} submenu">
+                {{- 'icon-chevron-down.svg' | inline_asset_content -}}
+              </button>
+            {%- else -%}
+              <svg class="header-drawer__nav-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
             {%- endif -%}
           </div>
           {%- if link.links.size > 0 -%}
@@ -664,14 +708,81 @@
       {%- endfor -%}
     </ul>
   </nav>
-  {%- if shop.customer_accounts_enabled -%}
-    <div class="header-drawer__footer">
-      <a href="{{ routes.account_url }}" class="header-drawer__account-link">
-        {{- 'icon-account.svg' | inline_asset_content -}}
-        {%- if customer -%}Mijn account{%- else -%}{{ section.settings.account_label }}{%- endif -%}
+
+  <!-- Extra links -->
+  <div class="header-drawer__extras">
+    <a href="{{ routes.search_url }}" class="header-drawer__extra-link">
+      <span class="header-drawer__extra-icon" aria-hidden="true">{{- 'icon-search.svg' | inline_asset_content -}}</span>
+      <span>Zoeken</span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+    </a>
+    {%- if shop.customer_accounts_enabled -%}
+      <a href="{{ routes.account_url }}" class="header-drawer__extra-link">
+        <span class="header-drawer__extra-icon" aria-hidden="true">{{- 'icon-account.svg' | inline_asset_content -}}</span>
+        <span>{%- if customer -%}Mijn account{%- else -%}{{ section.settings.account_label }}{%- endif -%}</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
       </a>
+    {%- endif -%}
+    <a href="{{ routes.cart_url }}" class="header-drawer__extra-link">
+      <span class="header-drawer__extra-icon" aria-hidden="true">{{- 'icon-cart.svg' | inline_asset_content -}}</span>
+      <span>Winkelwagen</span>
+      <span class="header-drawer__extra-badge">
+        {%- if cart.item_count > 0 -%}<span class="header-drawer__cart-count">{{ cart.item_count }}</span>{%- endif -%}
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+      </span>
+    </a>
+    <a href="/pages/klantenservice" class="header-drawer__extra-link">
+      <span class="header-drawer__extra-icon" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+      </span>
+      <span>Klantenservice</span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+    </a>
+    <a href="/pages/veelgestelde-vragen" class="header-drawer__extra-link">
+      <span class="header-drawer__extra-icon" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </span>
+      <span>Veelgestelde vragen</span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+    </a>
+  </div>
+
+  <!-- Banner Kwispelclub -->
+  {%- if section.settings.drawer_banner_title != blank -%}
+    <div class="header-drawer__banner">
+      <div class="header-drawer__banner-content">
+        <strong class="header-drawer__banner-title">{{ section.settings.drawer_banner_title }}</strong>
+        {%- if section.settings.drawer_banner_text != blank -%}
+          <p class="header-drawer__banner-text">{{ section.settings.drawer_banner_text }}</p>
+        {%- endif -%}
+        {%- if section.settings.drawer_banner_cta != blank -%}
+          <a href="{{ section.settings.drawer_banner_url | default: routes.root_url }}" class="header-drawer__banner-btn">
+            {{ section.settings.drawer_banner_cta }}
+            {{- 'icon-paw.svg' | inline_asset_content -}}
+          </a>
+        {%- endif -%}
+      </div>
+      {%- if section.settings.drawer_banner_image != blank -%}
+        <div class="header-drawer__banner-img-wrap">
+          <img src="{{ section.settings.drawer_banner_image | image_url: width: 300 }}"
+               alt="{{ section.settings.drawer_banner_image.alt | escape }}"
+               width="150" height="150" loading="lazy" class="header-drawer__banner-img">
+        </div>
+      {%- endif -%}
     </div>
   {%- endif -%}
+
+  <!-- Footer -->
+  <div class="header-drawer__footer">
+    <span class="header-drawer__footer-text">Woeff, tot snel! ♡</span>
+    <div class="header-drawer__footer-wave" aria-hidden="true">
+      <svg viewBox="0 0 375 48" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0 24C62.5 24 62.5 48 125 48C187.5 48 187.5 24 250 24C312.5 24 312.5 48 375 48V0H0V24Z" fill="var(--color-green)" opacity="0.3"/>
+        <path d="M0 32C62.5 32 62.5 48 125 48C187.5 48 187.5 32 250 32C312.5 32 312.5 48 375 48V48H0V32Z" fill="var(--color-green)"/>
+      </svg>
+    </div>
+  </div>
+
 </div>
 <div class="header-drawer__overlay" id="header-overlay" aria-hidden="true" data-drawer-overlay></div>
 
@@ -954,31 +1065,74 @@
 .site-header__overlay[aria-hidden="false"]{opacity:1;visibility:visible;}
 
 /* ══ MOBIEL DRAWER ══════════════════════════════════════ */
-.header-drawer{position:fixed;top:0;left:0;bottom:0;width:min(320px,85vw);background:#fff;z-index:300;overflow-y:auto;overscroll-behavior:contain;transform:translateX(-100%);transition:transform 280ms cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;}
+.header-drawer{position:fixed;top:0;left:0;bottom:0;width:min(390px,100vw);background:#fff;z-index:300;overflow-y:auto;overscroll-behavior:contain;transform:translateX(-100%);transition:transform 280ms cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;}
 .header-drawer[aria-hidden="false"]{transform:translateX(0);}
-.header-drawer__header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--color-line);flex-shrink:0;}
-.header-drawer__title{font-family:var(--font-heading);font-size:1.1rem;color:var(--color-ink);}
-.header-drawer__close{display:flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:4px;color:var(--color-ink);}
+
+/* Header */
+.header-drawer__header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;flex-shrink:0;}
+.header-drawer__logo{display:flex;align-items:center;text-decoration:none;}
+.header-drawer__logo-img{height:48px;width:auto;}
+.header-drawer__logo-text{font-family:var(--font-heading);font-size:1.4rem;color:var(--color-ink);}
+.header-drawer__header-actions{display:flex;align-items:center;gap:4px;}
+.header-drawer__icon-btn{display:flex;align-items:center;justify-content:center;position:relative;background:none;border:none;cursor:pointer;padding:8px;color:var(--color-ink);border-radius:var(--radius-sm);text-decoration:none;}
+.header-drawer__icon-btn svg{width:22px;height:22px;}
+.header-drawer__cart-btn{position:relative;}
+.header-drawer__cart-count{position:absolute;top:-2px;right:-2px;background:var(--color-pink);color:#fff;font-family:var(--font-body);font-size:.6rem;font-weight:800;min-width:18px;height:18px;padding:0 4px;border-radius:999px;display:flex;align-items:center;justify-content:center;border:2px solid #fff;}
+.header-drawer__close{display:flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:8px;color:var(--color-ink);}
 .header-drawer__close svg{width:22px;height:22px;}
-.header-drawer__search{padding:16px 20px;border-bottom:1px solid var(--color-line);display:flex;gap:8px;flex-shrink:0;}
-.header-drawer__search-field{flex:1;display:flex;align-items:center;gap:8px;background:var(--color-cream);border-radius:var(--radius-pill);border:1.5px solid var(--color-line);padding:0 12px;}
-.header-drawer__search-field svg{width:16px;height:16px;color:var(--color-muted);flex-shrink:0;}
-.header-drawer__search-input{flex:1;height:40px;background:none;border:none;outline:none;font-family:var(--font-body);font-size:.9rem;color:var(--color-ink);min-width:0;}
-.header-drawer__search-btn{height:40px;padding:0 16px;background:var(--color-ink);color:#fff;border:none;border-radius:var(--radius-pill);font-family:var(--font-heading);font-size:.85rem;cursor:pointer;flex-shrink:0;}
-.header-drawer__nav{list-style:none;margin:0;padding:8px 0;flex:1;}
+
+/* Trust bar */
+.header-drawer__trust{display:flex;background:var(--color-cream);padding:12px 20px;gap:0;border-top:1px solid var(--color-line);border-bottom:1px solid var(--color-line);flex-shrink:0;}
+.header-drawer__trust-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;padding:0 4px;}
+.header-drawer__trust-item+.header-drawer__trust-item{border-left:1px solid var(--color-line);}
+.header-drawer__trust-icon{display:flex;align-items:center;justify-content:center;color:var(--color-muted);}
+.header-drawer__trust-icon svg{width:18px;height:18px;}
+.header-drawer__trust-text{font-family:var(--font-body);font-size:.65rem;font-weight:600;color:var(--color-body);line-height:1.3;}
+
+/* Navigatie */
+.header-drawer__nav-wrap{flex-shrink:0;}
+.header-drawer__nav{list-style:none;margin:0;padding:8px 0;}
 .header-drawer__nav-item{border-bottom:1px solid var(--color-line);}
-.header-drawer__nav-row{display:flex;align-items:center;}
-.header-drawer__nav-link{flex:1;padding:14px 20px;text-decoration:none;font-family:var(--font-body);font-size:1rem;font-weight:700;color:var(--color-ink);transition:color 120ms;}
-.header-drawer__nav-link:hover,.header-drawer__nav-link[aria-current="page"]{color:var(--color-pink);}
-.header-drawer__sub-toggle{background:none;border:none;cursor:pointer;padding:14px 16px;color:var(--color-muted);display:flex;align-items:center;transition:transform 200ms;}
+.header-drawer__nav-row{display:grid;grid-template-columns:56px 1fr 40px;align-items:center;padding:4px 12px 4px 16px;}
+.header-drawer__nav-icon{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.header-drawer__nav-icon svg{width:22px;height:22px;}
+.header-drawer__nav-icon--green{background:#e8f5e2;color:var(--color-green);}
+.header-drawer__nav-icon--pink{background:#ffe0ee;color:var(--color-pink);}
+.header-drawer__nav-icon--orange{background:#fff0e4;color:var(--color-orange);}
+.header-drawer__nav-link{font-family:var(--font-body);font-size:1rem;font-weight:700;color:var(--color-ink);text-decoration:none;padding:16px 0;}
+.header-drawer__nav-chevron{color:var(--color-muted);opacity:.4;flex-shrink:0;}
+.header-drawer__sub-toggle{background:none;border:none;cursor:pointer;padding:8px;color:var(--color-muted);display:flex;align-items:center;justify-content:center;transition:transform 200ms;}
 .header-drawer__sub-toggle svg{width:18px;height:18px;}
 .header-drawer__sub-toggle[aria-expanded="true"]{transform:rotate(180deg);}
 .header-drawer__sub-nav{list-style:none;margin:0;padding:0;background:var(--color-cream);}
-.header-drawer__sub-link{display:block;padding:10px 20px 10px 32px;text-decoration:none;font-family:var(--font-body);font-size:.88rem;color:var(--color-body);border-top:1px solid var(--color-line);transition:color 120ms;}
+.header-drawer__sub-link{display:block;padding:10px 20px 10px 84px;text-decoration:none;font-family:var(--font-body);font-size:.88rem;color:var(--color-body);border-top:1px solid var(--color-line);}
 .header-drawer__sub-link:hover{color:var(--color-pink);}
-.header-drawer__footer{padding:16px 20px;border-top:1px solid var(--color-line);flex-shrink:0;}
-.header-drawer__account-link{display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-family:var(--font-body);font-size:.9rem;font-weight:700;color:var(--color-ink);}
-.header-drawer__account-link svg{width:18px;height:18px;}
+
+/* Extra links */
+.header-drawer__extras{padding:8px 0;border-top:1px solid var(--color-line);flex-shrink:0;}
+.header-drawer__extra-link{display:grid;grid-template-columns:44px 1fr auto;align-items:center;gap:4px;padding:12px 20px;text-decoration:none;color:var(--color-ink);font-family:var(--font-body);font-size:.9rem;font-weight:600;transition:background 120ms;}
+.header-drawer__extra-link:hover{background:var(--color-cream);}
+.header-drawer__extra-icon{width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:var(--color-muted);}
+.header-drawer__extra-icon svg{width:18px;height:18px;}
+.header-drawer__extra-badge{display:flex;align-items:center;gap:4px;}
+
+/* Banner */
+.header-drawer__banner{margin:16px;border-radius:var(--radius-lg);background:var(--color-cream);display:flex;align-items:flex-end;overflow:hidden;min-height:160px;flex-shrink:0;}
+.header-drawer__banner-content{flex:1;padding:20px 16px 20px 20px;display:flex;flex-direction:column;gap:10px;}
+.header-drawer__banner-title{font-family:var(--font-heading);font-size:1.3rem;color:var(--color-green);line-height:1.2;}
+.header-drawer__banner-text{font-family:var(--font-body);font-size:.82rem;color:var(--color-body);line-height:1.5;margin:0;}
+.header-drawer__banner-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:var(--color-green);color:#fff;border-radius:var(--radius-pill);font-family:var(--font-heading);font-size:.85rem;text-decoration:none;width:fit-content;}
+.header-drawer__banner-btn svg{width:14px;height:14px;}
+.header-drawer__banner-img-wrap{width:140px;flex-shrink:0;}
+.header-drawer__banner-img{width:100%;height:100%;object-fit:cover;object-position:top;}
+
+/* Footer */
+.header-drawer__footer{flex-shrink:0;margin-top:auto;}
+.header-drawer__footer-text{display:block;text-align:center;font-family:var(--font-heading);font-size:.95rem;color:var(--color-muted);padding:16px 20px 8px;}
+.header-drawer__footer-wave{display:block;line-height:0;}
+.header-drawer__footer-wave svg{width:100%;height:48px;}
+
+/* Overlay */
 .header-drawer__overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:299;opacity:0;visibility:hidden;transition:opacity 280ms,visibility 280ms;}
 .header-drawer__overlay[aria-hidden="false"]{opacity:1;visibility:visible;}
 
@@ -1884,6 +2038,35 @@
       "id": "account_label",
       "label": "Account label",
       "default": "Mijn account"
+    },
+    {
+      "type": "header",
+      "content": "Mobiel drawer banner"
+    },
+    {
+      "type": "text",
+      "id": "drawer_banner_title",
+      "label": "Banner titel"
+    },
+    {
+      "type": "textarea",
+      "id": "drawer_banner_text",
+      "label": "Banner tekst"
+    },
+    {
+      "type": "text",
+      "id": "drawer_banner_cta",
+      "label": "Banner knoptekst"
+    },
+    {
+      "type": "url",
+      "id": "drawer_banner_url",
+      "label": "Banner knop link"
+    },
+    {
+      "type": "image_picker",
+      "id": "drawer_banner_image",
+      "label": "Banner afbeelding"
     }
   ],
   "presets": [
