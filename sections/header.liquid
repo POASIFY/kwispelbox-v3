@@ -51,10 +51,10 @@
           <button type="button" class="site-header__search-clear" aria-label="Wissen" hidden data-search-clear>
             {{- 'icon-close.svg' | inline_asset_content -}}
           </button>
+          <button type="submit" class="site-header__search-bar-btn" aria-label="Zoeken">
+            {{- 'icon-search.svg' | inline_asset_content -}}
+          </button>
         </div>
-        <button type="submit" class="site-header__search-bar-btn">
-          {{- 'icon-search.svg' | inline_asset_content -}}
-        </button>
         <div class="site-header__search-results" id="search-results" role="listbox" hidden data-search-results></div>
       </form>
 
@@ -825,7 +825,7 @@
   height:48px;
   background:var(--color-cream);
   border:1.5px solid var(--color-line);
-  border-radius:var(--radius-pill) 0 0 var(--radius-pill);
+  border-radius:var(--radius-pill);
   padding:0 16px;
   transition:border-color 160ms;
 }
@@ -848,8 +848,8 @@
 .site-header__search-clear svg{width:16px;height:16px;}
 .site-header__search-bar-btn{
   height:48px;
-  width:52px;
-  background:var(--color-orange);
+  width:48px;
+  background:none;
   border:none;
   border-radius:0 var(--radius-pill) var(--radius-pill) 0;
   display:flex;
@@ -857,11 +857,11 @@
   justify-content:center;
   cursor:pointer;
   flex-shrink:0;
-  transition:background 160ms;
-  color:#fff;
+  color:var(--color-muted);
+  transition:color 160ms;
 }
-.site-header__search-bar-btn:hover{background:#d9823a;}
-.site-header__search-bar-btn svg{width:18px;height:18px;}
+.site-header__search-bar-btn:hover{color:var(--color-ink);}
+.site-header__search-bar-btn svg{width:20px;height:20px;}
 .site-header__search-results{
   position:absolute;
   top:calc(100% + 4px);
