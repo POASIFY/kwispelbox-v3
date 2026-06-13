@@ -17,7 +17,10 @@
     "checkout": "Checkout",
     "title": "Cart",
     "update": "Update",
-    "remove": "Remove"
+    "remove": "Remove",
+    "general": {
+      "title": "Winkelwagen"
+    }
   },
   "customers": {
     "login": {
@@ -48,5 +51,17 @@
     "submit": "Search",
     "no_results_html": "No results found for {{ terms }}",
     "results_for_html": "{{ count }} results found for {{ terms }}"
+  },
+  "accessibility": {
+    "open_menu": "Open menu",
+    "open_cart": "Open winkelwagen"
+  },
+  "customer": {
+    "account": {
+      "title": "Mijn account"
+    },
+    "login": {
+      "title": "Inloggen"
+    }
   }
 }

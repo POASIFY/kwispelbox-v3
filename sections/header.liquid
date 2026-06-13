@@ -1,76 +1,453 @@
-<header>
-  <h2 class="header__title">
-    {{ shop.name | link_to: routes.root_url }}
-  </h2>
+{%- comment -%} sections/header.liquid — GrillBrothers {%- endcomment -%}
 
-  <div class="header__menu">
-    {% for link in section.settings.menu.links %}
-      {{ link.title | link_to: link.url }}
-    {% endfor %}
-  </div>
+<style>
+  #shopify-section-{{ section.id }} {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+  }
 
-  <div class="header__icons">
-    {% if shop.customer_accounts_enabled %}
-      <shopify-account menu="{{ section.settings.customer_account_menu }}">
-        {{ 'icon-account.svg' | inline_asset_content }}
-      </shopify-account>
-    {% endif %}
-
-    <a href="{{ routes.cart_url }}">
-      {% if cart.item_count > 0 %}
-        <sup>{{ cart.item_count }}</sup>
-      {% endif %}
-
-      {{ 'icon-cart.svg' | inline_asset_content }}
-    </a>
-  </div>
-</header>
-
-{% stylesheet %}
-  header {
-    height: 5rem;
+  .gb-header {
+    height: {{ section.settings.header_height }}px;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding: 0 48px;
+    background: rgba({{ section.settings.header_bg.rgb }}, {{ section.settings.header_opacity | divided_by: 100.0 }});
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(239, 238, 234, 0.07);
+    transition: background 0.3s;
   }
-  header a {
-    position: relative;
+
+  /* ── LOGO ── */
+  .gb-header__logo {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: {{ section.settings.logo_size }}px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--gb-ash);
     text-decoration: none;
-    color: var(--color-foreground);
+    flex-shrink: 0;
+  }
+  .gb-header__logo em {
+    font-style: normal;
+    color: var(--gb-ember);
+  }
+
+  /* Logo als afbeelding */
+  .gb-header__logo-img {
+    height: {{ section.settings.logo_height }}px;
+    width: auto;
+    display: block;
+  }
+
+  /* ── NAVIGATIE ── */
+  .gb-header__nav {
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: 36px;
+    list-style: none;
   }
-  header a sup {
+
+  .gb-header__nav-link {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--gb-ash-2);
+    text-decoration: none;
+    transition: color 0.2s;
+    position: relative;
+  }
+  .gb-header__nav-link::after {
+    content: '';
     position: absolute;
-    left: 100%;
-    overflow: hidden;
-    max-width: var(--page-margin);
+    bottom: -4px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--gb-ember);
+    transform: scaleX(0);
+    transition: transform 0.2s;
   }
-  header svg {
-    width: 2rem;
+  .gb-header__nav-link:hover {
+    color: var(--gb-ash);
   }
-  header .header__menu,
-  header .header__icons {
+  .gb-header__nav-link:hover::after,
+  .gb-header__nav-link[aria-current="page"]::after {
+    transform: scaleX(1);
+  }
+  .gb-header__nav-link[aria-current="page"] {
+    color: var(--gb-ash);
+  }
+
+  /* ── ACTIES (winkelwagen, account) ── */
+  .gb-header__actions {
     display: flex;
-    gap: 1rem;
+    align-items: center;
+    gap: 20px;
+    flex-shrink: 0;
   }
-{% endstylesheet %}
+
+  .gb-header__action-link {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--gb-ash-2);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .gb-header__action-link:hover {
+    color: var(--gb-ash);
+  }
+
+  .gb-header__cart {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--gb-ember);
+    color: var(--gb-ash);
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 9px 20px;
+    border-radius: var(--border-radius-sm);
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .gb-header__cart:hover {
+    background: var(--gb-ember-l);
+  }
+
+  .gb-header__cart-count {
+    font-family: var(--font-mono);
+    font-size: 12px;
+  }
+
+  /* ── MOBIEL MENU KNOP ── */
+  .gb-header__menu-btn {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    padding: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  .gb-header__menu-btn span {
+    display: block;
+    width: 22px;
+    height: 1.5px;
+    background: var(--gb-ash);
+    transition: transform 0.3s, opacity 0.3s;
+  }
+
+  /* ── MOBIEL MENU ── */
+  .gb-mobile-nav {
+    display: none;
+    position: fixed;
+    top: {{ section.settings.header_height }}px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--gb-coal-2);
+    z-index: 99;
+    padding: 40px 32px;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+    transform: translateX(-100%);
+    transition: transform 0.35s ease;
+  }
+  .gb-mobile-nav.is-open {
+    transform: translateX(0);
+  }
+
+  .gb-mobile-nav__link {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 36px;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+    color: var(--gb-ash);
+    text-decoration: none;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(239, 238, 234, 0.07);
+    transition: color 0.2s;
+    display: block;
+  }
+  .gb-mobile-nav__link:hover {
+    color: var(--gb-ember);
+  }
+
+  .gb-mobile-nav__actions {
+    margin-top: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* ── BODY OFFSET — voorkomt dat content achter de vaste header valt ── */
+  body {
+    padding-top: {{ section.settings.header_height }}px;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 989px) {
+    .gb-header {
+      padding: 0 24px;
+    }
+    .gb-header__nav {
+      display: none;
+    }
+    .gb-header__action-link {
+      display: none;
+    }
+    .gb-header__menu-btn {
+      display: flex;
+    }
+    .gb-mobile-nav {
+      display: flex;
+    }
+  }
+</style>
+
+{%- liquid
+  assign main_menu = linklists[section.settings.menu]
+-%}
+
+<header class="gb-header" role="banner">
+
+  {%- comment -%} ── LOGO ── {%- endcomment -%}
+  <a href="{{ routes.root_url }}" class="gb-header__logo" aria-label="{{ shop.name }}">
+    {%- if section.settings.logo != blank -%}
+      {{
+        section.settings.logo
+        | image_url: width: 300
+        | image_tag:
+          class: 'gb-header__logo-img',
+          alt: section.settings.logo.alt | default: shop.name,
+          loading: 'eager',
+          fetchpriority: 'high'
+      }}
+    {%- else -%}
+      Grill<em>Brothers</em>
+    {%- endif -%}
+  </a>
+
+  {%- comment -%} ── NAVIGATIE ── {%- endcomment -%}
+  <nav aria-label="{{ 'accessibility.open_menu' | t }}">
+    <ul class="gb-header__nav" role="list">
+      {%- for link in main_menu.links -%}
+        <li>
+          <a
+            href="{{ link.url }}"
+            class="gb-header__nav-link"
+            {% if link.active %}aria-current="page"{% endif %}
+          >
+            {{ link.title }}
+          </a>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </nav>
+
+  {%- comment -%} ── ACTIES ── {%- endcomment -%}
+  <div class="gb-header__actions">
+
+    {%- if section.settings.show_account and shop.customer_accounts_enabled -%}
+      <a
+        href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}"
+        class="gb-header__action-link"
+        aria-label="{%- if customer -%}{{ 'customer.account.title' | t }}{%- else -%}{{ 'customer.login.title' | t }}{%- endif -%}"
+      >
+        {%- if customer -%}
+          {{ 'customer.account.title' | t }}
+        {%- else -%}
+          {{ 'customer.login.title' | t }}
+        {%- endif -%}
+      </a>
+    {%- endif -%}
+
+    <a
+      href="{{ routes.cart_url }}"
+      class="gb-header__cart"
+      aria-label="{{ 'accessibility.open_cart' | t }}"
+    >
+      {{ 'cart.general.title' | t }}
+      <span class="gb-header__cart-count" aria-live="polite">
+        ({{ cart.item_count }})
+      </span>
+    </a>
+
+    {%- comment -%} ── MOBIEL MENU KNOP ── {%- endcomment -%}
+    <button
+      class="gb-header__menu-btn"
+      aria-expanded="false"
+      aria-controls="gb-mobile-nav"
+      aria-label="{{ 'accessibility.open_menu' | t }}"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+  </div>
+</header>
+
+{%- comment -%} ── MOBIEL MENU ── {%- endcomment -%}
+<nav
+  id="gb-mobile-nav"
+  class="gb-mobile-nav"
+  aria-label="{{ 'accessibility.open_menu' | t }}"
+  aria-hidden="true"
+>
+  {%- for link in main_menu.links -%}
+    <a
+      href="{{ link.url }}"
+      class="gb-mobile-nav__link"
+      {% if link.active %}aria-current="page"{% endif %}
+    >
+      {{ link.title }}
+    </a>
+  {%- endfor -%}
+
+  <div class="gb-mobile-nav__actions">
+    {%- if section.settings.show_account and shop.customer_accounts_enabled -%}
+      <a href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}" class="gb-btn-ghost">
+        {%- if customer -%}{{ 'customer.account.title' | t }}{%- else -%}{{ 'customer.login.title' | t }}{%- endif -%}
+      </a>
+    {%- endif -%}
+    <a href="{{ routes.cart_url }}" class="gb-btn-primary">
+      {{ 'cart.general.title' | t }} ({{ cart.item_count }})
+    </a>
+  </div>
+</nav>
+
+<script>
+  (function() {
+    var btn = document.querySelector('.gb-header__menu-btn');
+    var nav = document.getElementById('gb-mobile-nav');
+
+    if (!btn || !nav) return;
+
+    btn.addEventListener('click', function() {
+      var isOpen = nav.classList.contains('is-open');
+      nav.classList.toggle('is-open');
+      btn.setAttribute('aria-expanded', !isOpen);
+      nav.setAttribute('aria-hidden', isOpen);
+      document.body.style.overflow = isOpen ? '' : 'hidden';
+    });
+
+    // Sluit menu bij klik buiten
+    document.addEventListener('click', function(e) {
+      if (!btn.contains(e.target) && !nav.contains(e.target)) {
+        nav.classList.remove('is-open');
+        btn.setAttribute('aria-expanded', 'false');
+        nav.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+    });
+  })();
+</script>
 
 {% schema %}
 {
-  "name": "t:general.header",
+  "name": "Header — Navigatie",
+  "class": "gb-section-header",
   "settings": [
     {
-      "type": "link_list",
-      "id": "menu",
-      "label": "t:labels.menu"
+      "type": "header",
+      "content": "Logo"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo afbeelding",
+      "info": "Upload hier het GrillBrothers logo. Laat leeg om de tekstversie te gebruiken."
+    },
+    {
+      "type": "range",
+      "id": "logo_size",
+      "label": "Tekstlogo grootte",
+      "info": "Alleen van toepassing als er geen logo afbeelding is geüpload.",
+      "min": 16,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "logo_height",
+      "label": "Logo hoogte",
+      "info": "Hoogte van het logo als afbeelding.",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "header",
+      "content": "Navigatie"
     },
     {
       "type": "link_list",
-      "id": "customer_account_menu",
-      "label": "t:labels.customer_account_menu",
-      "default": "customer-account-main-menu"
+      "id": "menu",
+      "label": "Hoofdmenu",
+      "info": "Kies het menu dat in de navigatie wordt getoond. Beheer menu's via Online Winkel > Navigatie.",
+      "default": "main-menu"
+    },
+    {
+      "type": "header",
+      "content": "Account"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_account",
+      "label": "Toon account-link",
+      "info": "Toont een inlog- of accountlink naast de winkelwagen. Alleen zichtbaar als klantenaccounts zijn ingeschakeld.",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Uiterlijk"
+    },
+    {
+      "type": "range",
+      "id": "header_height",
+      "label": "Headerhoogte",
+      "info": "Hoogte van de navigatiebalk.",
+      "min": 52,
+      "max": 96,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "color",
+      "id": "header_bg",
+      "label": "Achtergrondkleur header",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "range",
+      "id": "header_opacity",
+      "label": "Doorzichtigheid achtergrond",
+      "info": "100 = volledig dekkend, lager = meer glaseffect.",
+      "min": 60,
+      "max": 100,
+      "step": 5,
+      "default": 95
     }
   ]
 }
