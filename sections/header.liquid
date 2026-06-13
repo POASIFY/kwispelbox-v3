@@ -62,13 +62,13 @@
       <div class="site-header__actions">
         {%- if shop.customer_accounts_enabled -%}
           <a href="{{ routes.account_url }}" class="site-header__action-btn">
-            <span class="site-header__action-icon" aria-hidden="true">{{- 'icon-account.svg' | inline_asset_content -}}</span>
+            <span class="site-header__action-icon" aria-hidden="true" style="width:22px;height:22px;">{{- 'icon-account.svg' | inline_asset_content -}}</span>
             <span class="site-header__action-label">Mijn account</span>
           </a>
         {%- endif -%}
         <a href="{{ routes.cart_url }}" class="site-header__action-btn site-header__cart-btn"
            aria-label="Winkelwagen, {{ cart.item_count }} items">
-          <span class="site-header__action-icon" aria-hidden="true">
+          <span class="site-header__action-icon" aria-hidden="true" style="width:22px;height:22px;">
             {{- 'icon-cart.svg' | inline_asset_content -}}
             {%- if cart.item_count > 0 -%}
               <span class="site-header__cart-count" aria-hidden="true">{{ cart.item_count }}</span>
@@ -813,7 +813,7 @@
 /* Logo */
 .site-header__logo{display:flex;flex-direction:column;text-decoration:none;flex-shrink:0;}
 .site-header__logo-img{height:auto;max-height:56px;width:auto;display:block;}
-.site-header__logo-text{font-family:var(--font-heading);font-size:1.5rem;color:var(--color-ink);}
+.site-header__logo-text{font-family:var(--font-heading);font-size:1.5rem;color:var(--color-ink);white-space:nowrap;}
 
 /* Zoekbalk desktop */
 .site-header__search-bar{position:relative;display:flex;align-items:center;width:100%;}
@@ -893,7 +893,8 @@
   position:relative;
 }
 .site-header__action-btn:hover{background:var(--color-cream);}
-.site-header__action-icon{display:flex;align-items:center;position:relative;}
+.site-header__action-icon{display:flex;align-items:center;position:relative;width:22px;height:22px;flex-shrink:0;}
+.site-header__action-icon svg,.site-header__action-icon img{width:22px!important;height:22px!important;max-width:22px!important;display:block;}
 .site-header__action-icon svg{width:22px;height:22px;}
 .site-header__action-label{display:block;}
 .site-header__account{display:flex;}
@@ -917,7 +918,7 @@
 
 /* Hamburger (mobiel) */
 .site-header__burger{display:none;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:8px;color:var(--color-ink);}
-.site-header__burger svg{width:24px;height:24px;}
+.site-header__burger svg{width:24px;height:24px;display:block;}
 
 /* ══ RIJ 2: NAVIGATIE ════════════════════════════════ */
 .site-header{background:#fff;}
