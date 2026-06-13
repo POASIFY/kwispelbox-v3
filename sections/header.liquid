@@ -73,76 +73,130 @@
                     <div class="site-header__dropdown-card">
                       {%- assign layout = dd.settings.layout_type | default: 'standard' -%}
 
-                      {%- comment -%} ══ LAYOUT: FEATURED (Verrassingsboxen) ══ {%- endcomment -%}
+                      {%- comment -%} ══ LAYOUT: FEATURED / MEGA (Verrassingsboxen) ══ {%- endcomment -%}
                       {%- if layout == 'featured' -%}
-                        <div class="dd-featured">
-                          <div class="dd-featured__products">
-                            {%- for pb in prod_blocks -%}
-                              {%- if pb.settings.menu_item_index == lx -%}
-                                {%- assign p = pb.settings.product -%}
-                                {%- if p != blank -%}
-                                  <a href="{{ p.url }}" class="dd-featured__product" {{ pb.shopify_attributes }}>
-                                    {%- if pb.settings.badge != blank -%}
-                                      <span class="dd-featured__product-badge">{{ pb.settings.badge }}</span>
-                                    {%- endif -%}
-                                    {%- if p.featured_image -%}
-                                      <img src="{{ p.featured_image | image_url: width: 260 }}"
-                                           alt="{{ p.featured_image.alt | default: p.title | escape }}"
-                                           width="260" height="180" loading="lazy"
-                                           class="dd-featured__product-img">
-                                    {%- endif -%}
-                                    <div class="dd-featured__product-info">
-                                      <strong>{{ p.title }}</strong>
-                                      {%- if pb.settings.description != blank -%}
-                                        <span>{{ pb.settings.description }}</span>
+                        {%- comment -%}
+                          Mega layout: kolom 1 = producten + links,
+                          kolom 2-N = dropdown_col blocks met dezelfde menu_item_index,
+                          rechts = banner
+                        {%- endcomment -%}
+                        <div class="dd-mega">
+
+                          {%- comment -%} Kolom 1: producten + extra links {%- endcomment -%}
+                          <div class="dd-mega__col dd-mega__col--products">
+                            <div class="dd-mega__col-head dd-mega__col-head--{{ dd.settings.accent_color }}">
+                              {{- 'icon-gift.svg' | inline_asset_content -}}
+                              <a href="{{ link.url }}" class="dd-mega__col-title">{{ link.title }}</a>
+                            </div>
+
+                            <div class="dd-mega__products">
+                              {%- for pb in prod_blocks -%}
+                                {%- if pb.settings.menu_item_index == lx -%}
+                                  {%- assign p = pb.settings.product -%}
+                                  {%- if p != blank -%}
+                                    <a href="{{ p.url }}" class="dd-mega__product" {{ pb.shopify_attributes }}>
+                                      {%- if pb.settings.badge != blank -%}
+                                        <span class="dd-mega__product-badge">{{ pb.settings.badge }}</span>
                                       {%- endif -%}
-                                      <span class="dd-featured__product-price">{{ p.price | money }}</span>
-                                    </div>
+                                      {%- if p.featured_image -%}
+                                        <img src="{{ p.featured_image | image_url: width: 200 }}"
+                                             alt="{{ p.featured_image.alt | default: p.title | escape }}"
+                                             width="200" height="120" loading="lazy"
+                                             class="dd-mega__product-img">
+                                      {%- endif -%}
+                                      <div class="dd-mega__product-info">
+                                        <strong>{{ p.title }}</strong>
+                                        {%- if pb.settings.description != blank -%}
+                                          <span>{{ pb.settings.description }}</span>
+                                        {%- endif -%}
+                                        <span class="dd-mega__product-price">{{ p.price | money }}</span>
+                                      </div>
+                                    </a>
+                                  {%- endif -%}
+                                {%- endif -%}
+                              {%- endfor -%}
+                            </div>
+
+                            {%- if dd.settings.link_list != blank -%}
+                              <ul class="dd-mega__extra-links" role="list">
+                                {%- for child in dd.settings.link_list.links -%}
+                                  <li>
+                                    <a href="{{ child.url }}" class="dd-mega__extra-link">
+                                      <span class="dd-link-icon dd-link-icon--{{ dd.settings.accent_color }}" aria-hidden="true">
+                                        {{- 'icon-gift.svg' | inline_asset_content -}}
+                                      </span>
+                                      {{ child.title }}
+                                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                                    </a>
+                                  </li>
+                                {%- endfor -%}
+                              </ul>
+                            {%- endif -%}
+
+                            {%- if dd.settings.view_all_label != blank -%}
+                              <a href="{{ dd.settings.view_all_url | default: link.url }}" class="dd-view-all dd-view-all--{{ dd.settings.accent_color }}">
+                                {{ dd.settings.view_all_label }}
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                              </a>
+                            {%- endif -%}
+                          </div>
+
+                          {%- comment -%} Kolom 2-N: dropdown_col blocks (overige categorieën) {%- endcomment -%}
+                          {%- for cb in col_blocks -%}
+                            {%- if cb.settings.menu_item_index == lx -%}
+                              <div class="dd-mega__col dd-mega__col--cat dd-mega__col--{{ cb.settings.color }}" {{ cb.shopify_attributes }}>
+                                <div class="dd-mega__col-head dd-mega__col-head--{{ cb.settings.color }}">
+                                  {%- if cb.settings.icon != blank -%}
+                                    <span class="dd-mega__col-icon" aria-hidden="true">
+                                      {{- cb.settings.icon | inline_asset_content -}}
+                                    </span>
+                                  {%- endif -%}
+                                  <a href="{{ cb.settings.cta_url | default: '#' }}" class="dd-mega__col-title">{{ cb.settings.heading }}</a>
+                                </div>
+                                {%- if cb.settings.description != blank -%}
+                                  <p class="dd-mega__col-desc">{{ cb.settings.description }}</p>
+                                {%- endif -%}
+                                {%- if cb.settings.link_list != blank -%}
+                                  <ul class="dd-mega__col-links" role="list">
+                                    {%- for child in cb.settings.link_list.links limit: 5 -%}
+                                      <li>
+                                        <a href="{{ child.url }}" class="dd-mega__col-link">
+                                          {{ child.title }}
+                                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                                        </a>
+                                      </li>
+                                    {%- endfor -%}
+                                  </ul>
+                                {%- endif -%}
+                                {%- if cb.settings.cta_label != blank -%}
+                                  <a href="{{ cb.settings.cta_url | default: '#' }}" class="dd-mega__col-cta dd-mega__col-cta--{{ cb.settings.color }}">
+                                    {{ cb.settings.cta_label }}
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                                   </a>
                                 {%- endif -%}
-                              {%- endif -%}
-                            {%- endfor -%}
-                          </div>
-                          {%- if dd.settings.link_list != blank or dd.settings.view_all_label != blank -%}
-                            <div class="dd-featured__extra">
-                              {%- if dd.settings.link_list != blank -%}
-                                <ul class="dd-featured__links" role="list">
-                                  {%- for child in dd.settings.link_list.links -%}
-                                    <li>
-                                      <a href="{{ child.url }}" class="dd-featured__link">
-                                        <span class="dd-featured__link-icon dd-link-icon--{{ dd.settings.accent_color }}">
-                                          {{- 'icon-gift.svg' | inline_asset_content -}}
-                                        </span>
-                                        {{ child.title }}
-                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                                      </a>
-                                    </li>
-                                  {%- endfor -%}
-                                </ul>
-                              {%- endif -%}
-                              {%- if dd.settings.view_all_label != blank -%}
-                                <a href="{{ dd.settings.view_all_url | default: link.url }}" class="dd-view-all dd-view-all--{{ dd.settings.accent_color }}">
-                                  {{ dd.settings.view_all_label }}
-                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                                </a>
-                              {%- endif -%}
-                            </div>
-                          {%- endif -%}
+                              </div>
+                            {%- endif -%}
+                          {%- endfor -%}
+
+                          {%- comment -%} Banner rechts {%- endcomment -%}
                           {%- if dd.settings.banner_title != blank -%}
-                            <div class="dd-banner dd-banner--featured">
+                            <div class="dd-mega__banner">
                               {%- if dd.settings.banner_image != blank -%}
-                                <div class="dd-banner__img-wrap">
+                                <div class="dd-mega__banner-img-wrap">
                                   <img src="{{ dd.settings.banner_image | image_url: width: 400 }}"
-                                       alt="{{ dd.settings.banner_image.alt | escape }}"
-                                       width="400" height="260" loading="lazy" class="dd-banner__img">
+                                       alt="{{ dd.settings.banner_image.alt | default: dd.settings.banner_title | escape }}"
+                                       width="400" height="260" loading="lazy"
+                                       class="dd-mega__banner-img">
                                   {%- if dd.settings.banner_badge != blank -%}
-                                    <span class="dd-banner__badge dd-banner__badge--{{ dd.settings.accent_color }}">{{ dd.settings.banner_badge }}</span>
+                                    <span class="dd-mega__banner-badge">{{ dd.settings.banner_badge }}</span>
                                   {%- endif -%}
                                 </div>
                               {%- endif -%}
-                              <div class="dd-banner__body">
-                                <strong class="dd-banner__title">{{ dd.settings.banner_title }}</strong>
-                                {%- if dd.settings.banner_text != blank -%}<span class="dd-banner__text">{{ dd.settings.banner_text }}</span>{%- endif -%}
+                              <div class="dd-mega__banner-body">
+                                <strong class="dd-mega__banner-title">{{ dd.settings.banner_title }}</strong>
+                                {%- if dd.settings.banner_text != blank -%}
+                                  <span class="dd-mega__banner-text">{{ dd.settings.banner_text }}</span>
+                                {%- endif -%}
                                 {%- if dd.settings.banner_cta_label != blank -%}
                                   <a href="{{ dd.settings.banner_cta_url | default: link.url }}" class="dd-cta-btn dd-cta-btn--{{ dd.settings.accent_color }}">
                                     {{ dd.settings.banner_cta_label }}
@@ -152,6 +206,7 @@
                               </div>
                             </div>
                           {%- endif -%}
+
                         </div>
 
                       {%- comment -%} ══ LAYOUT: CATEGORIES (Shop) ══ {%- endcomment -%}
@@ -859,6 +914,69 @@
 .header-drawer__account-link svg{width:18px;height:18px;}
 .header-drawer__overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:299;opacity:0;visibility:hidden;transition:opacity 280ms,visibility 280ms;}
 .header-drawer__overlay[aria-hidden="false"]{opacity:1;visibility:visible;}
+
+/* ══ MEGA layout (Verrassingsboxen) ════════════════════ */
+.dd-mega{display:flex;gap:0;align-items:stretch;}
+
+/* Kolom 1: producten */
+.dd-mega__col{flex:1;min-width:0;padding:20px 18px;border-right:1.5px solid var(--color-line);display:flex;flex-direction:column;gap:10px;}
+.dd-mega__col:last-of-type{border-right:none;}
+.dd-mega__col--products{flex:1.4;}
+
+.dd-mega__col-head{display:flex;align-items:center;gap:8px;margin-bottom:4px;}
+.dd-mega__col-head svg{width:18px;height:18px;}
+.dd-mega__col-title{font-family:var(--font-heading);font-size:1rem;text-decoration:none;transition:opacity 160ms;}
+.dd-mega__col-title:hover{opacity:.8;}
+.dd-mega__col-head--green  svg,.dd-mega__col-head--green  .dd-mega__col-title{color:var(--color-green);}
+.dd-mega__col-head--pink   svg,.dd-mega__col-head--pink   .dd-mega__col-title{color:var(--color-pink);}
+.dd-mega__col-head--orange svg,.dd-mega__col-head--orange .dd-mega__col-title{color:var(--color-orange);}
+.dd-mega__col-head--yellow svg,.dd-mega__col-head--yellow .dd-mega__col-title{color:var(--color-yellow);}
+.dd-mega__col-head--ink    svg,.dd-mega__col-head--ink    .dd-mega__col-title{color:var(--color-ink);}
+
+.dd-mega__col-desc{font-family:var(--font-body);font-size:.75rem;color:var(--color-muted);line-height:1.4;margin:0;}
+.dd-mega__col-icon{display:flex;align-items:center;}
+.dd-mega__col-icon svg{width:18px;height:18px;}
+
+/* Producten in kolom 1 */
+.dd-mega__products{display:flex;flex-direction:column;gap:4px;}
+.dd-mega__product{display:flex;align-items:center;gap:12px;padding:8px;border-radius:var(--radius-md);text-decoration:none;color:var(--color-ink);transition:background 120ms;position:relative;}
+.dd-mega__product:hover{background:var(--color-cream);}
+.dd-mega__product-badge{position:absolute;top:8px;right:8px;background:var(--color-pink);color:#fff;font-family:var(--font-body);font-size:.62rem;font-weight:800;padding:2px 8px;border-radius:999px;}
+.dd-mega__product-img{width:72px;height:56px;object-fit:cover;border-radius:var(--radius-sm);flex-shrink:0;}
+.dd-mega__product-info{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.dd-mega__product-info strong{font-family:var(--font-body);font-size:.85rem;font-weight:700;color:var(--color-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.dd-mega__product-info span{font-family:var(--font-body);font-size:.72rem;color:var(--color-muted);}
+.dd-mega__product-price{font-family:var(--font-heading);font-size:.82rem;color:var(--color-green);}
+
+/* Extra links onderaan kolom 1 */
+.dd-mega__extra-links{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px;margin-top:4px;padding-top:10px;border-top:1px solid var(--color-line);}
+.dd-mega__extra-link{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:var(--radius-sm);text-decoration:none;font-family:var(--font-body);font-size:.82rem;font-weight:600;color:var(--color-ink);transition:background 120ms;}
+.dd-mega__extra-link:hover{background:var(--color-cream);}
+.dd-mega__extra-link svg{margin-left:auto;width:12px;height:12px;opacity:.4;transition:opacity 120ms;}
+.dd-mega__extra-link:hover svg{opacity:1;}
+
+/* Overige categorie-kolommen */
+.dd-mega__col-links{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:1px;}
+.dd-mega__col-link{display:flex;align-items:center;justify-content:space-between;padding:7px 8px;border-radius:var(--radius-sm);text-decoration:none;font-family:var(--font-body);font-size:.82rem;font-weight:600;color:var(--color-ink);transition:background 120ms;}
+.dd-mega__col-link:hover{background:var(--color-cream);}
+.dd-mega__col-link svg{width:12px;height:12px;opacity:.3;transition:opacity 120ms;flex-shrink:0;}
+.dd-mega__col-link:hover svg{opacity:.8;}
+.dd-mega__col-cta{display:inline-flex;align-items:center;gap:6px;margin-top:auto;padding:7px 14px;font-family:var(--font-heading);font-size:.78rem;border-radius:var(--radius-pill);text-decoration:none;transition:background 160ms;}
+.dd-mega__col-cta svg{width:12px;height:12px;}
+.dd-mega__col-cta--green {background:var(--color-green);color:#fff;}.dd-mega__col-cta--green:hover{background:#4d8833;}
+.dd-mega__col-cta--pink  {background:var(--color-pink);color:#fff;}.dd-mega__col-cta--pink:hover{background:#c4396a;}
+.dd-mega__col-cta--orange{background:var(--color-orange);color:#fff;}.dd-mega__col-cta--orange:hover{background:#d9823a;}
+.dd-mega__col-cta--purple{background:#7c3aed;color:#fff;}.dd-mega__col-cta--purple:hover{background:#6d28d9;}
+
+/* Banner in mega menu */
+.dd-mega__banner{width:220px;flex-shrink:0;display:flex;flex-direction:column;overflow:hidden;border-left:1.5px solid var(--color-line);}
+.dd-mega__banner-img-wrap{position:relative;flex-shrink:0;}
+.dd-mega__banner-img{width:100%;height:180px;object-fit:cover;display:block;}
+.dd-mega__banner-badge{position:absolute;top:10px;left:10px;background:var(--color-green);color:#fff;font-family:var(--font-heading);font-size:.68rem;padding:3px 10px;border-radius:var(--radius-pill);}
+.dd-mega__banner-body{padding:14px 16px;display:flex;flex-direction:column;gap:8px;flex:1;}
+.dd-mega__banner-title{font-family:var(--font-heading);font-size:1rem;color:var(--color-ink);line-height:1.2;}
+.dd-mega__banner-text{font-family:var(--font-body);font-size:.78rem;color:var(--color-muted);line-height:1.5;}
+
 {% endstylesheet %}
 
 {% javascript %}
@@ -1120,7 +1238,7 @@
       "settings": [
         {"type":"range","id":"menu_item_index","label":"Menu-item nummer","min":1,"max":10,"step":1,"default":1},
         {"type":"product","id":"product","label":"Product"},
-        {"type":"text","id":"badge","label":"Badge tekst (optioneel)"},
+        {"type":"text","id":"badge","label":"Badge tekst (optioneel)","default":""},
         {"type":"text","id":"description","label":"Korte omschrijving"}
       ]
     },
