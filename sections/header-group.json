@@ -9,28 +9,33 @@
           "type": "message",
           "settings": {
             "text": "Vandaag besteld, morgen in huis",
-            "icon": "icon-truck.svg"
+            "icon": "icon-truck.svg",
+            "icon_color": "orange"
           }
         },
         "m2": {
           "type": "message",
           "settings": {
             "text": "Gratis verzending vanaf €75",
-            "icon": "icon-gift.svg"
+            "icon": "icon-gift.svg",
+            "icon_color": "orange"
           }
         },
         "m3": {
           "type": "message",
           "settings": {
             "text": "100% blije honden garantie",
-            "icon": "icon-heart.svg"
+            "icon": "icon-heart.svg",
+            "icon_color": "pink"
           }
         },
         "m4": {
           "type": "message",
           "settings": {
             "text": "Klanten beoordelen ons met 4,9/5",
-            "icon": "icon-star.svg"
+            "icon": "icon-star.svg",
+            "icon_color": "yellow",
+            "stars": "★★★★★"
           }
         }
       },
