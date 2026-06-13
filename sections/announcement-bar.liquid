@@ -1,0 +1,104 @@
+<div class="ann full-width" role="region" aria-label="Aankondigingen">
+  {%- if section.blocks.size > 0 -%}
+    <ul class="ann__list" role="list">
+      {%- for block in section.blocks -%}
+        <li class="ann__item" {{ block.shopify_attributes }}>
+          <span class="ann__icon" aria-hidden="true">
+            {{- 'icon-' | append: block.settings.icon | append: '.svg' | inline_asset_content -}}
+          </span>
+          <span class="ann__text">{{ block.settings.text }}</span>
+        </li>
+        {%- unless forloop.last -%}
+          <li class="ann__sep" aria-hidden="true">|</li>
+        {%- endunless -%}
+      {%- endfor -%}
+    </ul>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+/* Verborgen op mobiel, zichtbaar op desktop */
+.ann {
+  background-color: #603A15;
+  color: #ffffff;
+  font-family: 'Karla', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .ann { display: block; }
+}
+
+.ann__list {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  list-style: none;
+  width: 100%;
+  padding: 7px 24px;
+  gap: 0;
+}
+
+.ann__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  padding: 0 20px;
+}
+
+.ann__icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: #FFE071;
+}
+.ann__icon svg { width: 14px; height: 14px; }
+
+.ann__sep {
+  color: rgba(255,255,255,.25);
+  font-size: 0.9rem;
+  flex-shrink: 0;
+  list-style: none;
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Aankondigingsbalk",
+  "tag": "div",
+  "limit": 1,
+  "enabled_on": { "groups": ["header"] },
+  "blocks": [
+    {
+      "type": "announcement",
+      "name": "Aankondiging",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icoon",
+          "default": "truck",
+          "options": [
+            { "value": "truck",   "label": "Verzending" },
+            { "value": "star",    "label": "Ster" },
+            { "value": "gift",    "label": "Cadeau" },
+            { "value": "heart",   "label": "Hart" },
+            { "value": "shield",  "label": "Schild" },
+            { "value": "refresh", "label": "Retour" },
+            { "value": "paw",     "label": "Poot" }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Tekst",
+          "default": "Gratis verzending vanaf \u20ac75"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
