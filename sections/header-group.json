@@ -40,11 +40,7 @@
         "m3",
         "m4"
       ],
-      "settings": {
-        "rotation_interval": 4,
-        "show_arrows": true,
-        "marquee_speed": 30
-      }
+      "settings": {}
     },
     "header": {
       "type": "header",
