@@ -115,3 +115,9 @@ body {
 .shopify-section > .full-width {
   grid-column: 1 / -1;
 }
+
+/* Section group: geen grid constraint, altijd full width */
+.shopify-section-group > .shopify-section {
+  display: block;
+  width: 100%;
+}
