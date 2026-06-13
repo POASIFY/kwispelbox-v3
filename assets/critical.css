@@ -116,8 +116,11 @@ body {
   grid-column: 1 / -1;
 }
 
-/* Section group: geen grid constraint, altijd full width */
-.shopify-section-group > .shopify-section {
+
+/* Header section group: sections zijn altijd full-width */
+.shopify-section-group--header-group .shopify-section,
+.shopify-section-group--header-group .shopify-section > * {
   display: block;
   width: 100%;
+  grid-column: unset;
 }
