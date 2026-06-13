@@ -1,113 +1,22 @@
-{%- liquid
-  assign heading_font       = settings.font_heading
-  assign body_font          = settings.font_body
-  assign body_font_bold     = body_font | font_modify: 'weight', 'bolder'
-  assign body_font_italic   = body_font | font_modify: 'style', 'italic'
-
-  case settings.border_radius_preset
-    when 'none'
-      assign radius_sm   = '0px'
-      assign radius_md   = '0px'
-      assign radius_lg   = '0px'
-      assign radius_xl   = '0px'
-      assign radius_pill = '4px'
-    when 'soft'
-      assign radius_sm   = '4px'
-      assign radius_md   = '6px'
-      assign radius_lg   = '8px'
-      assign radius_xl   = '10px'
-      assign radius_pill = '50px'
-    when 'rounded'
-      assign radius_sm   = '8px'
-      assign radius_md   = '12px'
-      assign radius_lg   = '16px'
-      assign radius_xl   = '20px'
-      assign radius_pill = '50px'
-    when 'pill'
-      assign radius_sm   = '12px'
-      assign radius_md   = '20px'
-      assign radius_lg   = '28px'
-      assign radius_xl   = '40px'
-      assign radius_pill = '50px'
-  endcase
--%}
-
-{%- comment -%} Font face declarations — only for non-system fonts {%- endcomment -%}
-{%- unless heading_font.system? -%}
-  {{ heading_font | font_face: font_display: 'swap' }}
-{%- endunless -%}
-{%- unless body_font.system? -%}
-  {{ body_font | font_face: font_display: 'swap' }}
-{%- endunless -%}
-{%- unless body_font_bold == null or body_font_bold.system? -%}
-  {{ body_font_bold | font_face: font_display: 'swap' }}
-{%- endunless -%}
-{%- unless body_font_italic == null or body_font_italic.system? -%}
-  {{ body_font_italic | font_face: font_display: 'swap' }}
-{%- endunless -%}
-
-:root {
-  /* ================================================================
-     COLORS
-     Hex values for direct use; RGB channels for rgba() compositing
-     ================================================================ */
-  --color-primary:          {{ settings.color_primary }};
-  --color-primary-rgb:      {{ settings.color_primary.red }}, {{ settings.color_primary.green }}, {{ settings.color_primary.blue }};
-
-  --color-secondary:        {{ settings.color_secondary }};
-  --color-secondary-rgb:    {{ settings.color_secondary.red }}, {{ settings.color_secondary.green }}, {{ settings.color_secondary.blue }};
-
-  --color-text:             {{ settings.color_text }};
-  --color-text-rgb:         {{ settings.color_text.red }}, {{ settings.color_text.green }}, {{ settings.color_text.blue }};
-
-  --color-text-muted:       {{ settings.color_text_muted }};
-  --color-text-muted-rgb:   {{ settings.color_text_muted.red }}, {{ settings.color_text_muted.green }}, {{ settings.color_text_muted.blue }};
-
-  --color-background:       {{ settings.color_background }};
-  --color-background-rgb:   {{ settings.color_background.red }}, {{ settings.color_background.green }}, {{ settings.color_background.blue }};
-
-  --color-surface:          {{ settings.color_surface }};
-  --color-surface-rgb:      {{ settings.color_surface.red }}, {{ settings.color_surface.green }}, {{ settings.color_surface.blue }};
-
-  --color-border:           {{ settings.color_border }};
-  --color-border-rgb:       {{ settings.color_border.red }}, {{ settings.color_border.green }}, {{ settings.color_border.blue }};
-
-  --color-accent:           {{ settings.color_accent }};
-  --color-accent-rgb:       {{ settings.color_accent.red }}, {{ settings.color_accent.green }}, {{ settings.color_accent.blue }};
-
-  --color-button-text:      {{ settings.color_button_text }};
-  --color-button-text-rgb:  {{ settings.color_button_text.red }}, {{ settings.color_button_text.green }}, {{ settings.color_button_text.blue }};
-
-  /* Derived: shadows tinted with text color */
-  --shadow-color:   {{ settings.color_text.red }}, {{ settings.color_text.green }}, {{ settings.color_text.blue }};
-  --shadow-sm:      0 1px 3px rgba(var(--shadow-color), 0.08);
-  --shadow-md:      0 4px 16px rgba(var(--shadow-color), 0.10);
-  --shadow-lg:      0 8px 32px rgba(var(--shadow-color), 0.12);
-
-  /* ================================================================
-     TYPOGRAPHY
-     ================================================================ */
-  --font-heading-family:      {{ heading_font.family }}, {{ heading_font.fallback_families }};
-  --font-heading-weight:      {{ heading_font.weight }};
-  --font-heading-style:       {{ heading_font.style }};
-
-  --font-body-family:         {{ body_font.family }}, {{ body_font.fallback_families }};
-  --font-body-weight:         {{ body_font.weight }};
-  --font-body-style:          {{ body_font.style }};
-  --font-body-weight-bold:    {{ body_font_bold.weight | default: 700 }};
-
-  /* ================================================================
-     BORDER RADIUS (driven by preset selector)
-     ================================================================ */
-  --radius-sm:    {{ radius_sm }};
-  --radius-md:    {{ radius_md }};
-  --radius-lg:    {{ radius_lg }};
-  --radius-xl:    {{ radius_xl }};
-  --radius-pill:  {{ radius_pill }};
-
-  /* ================================================================
-     LAYOUT
-     ================================================================ */
-  --container-width:    {{ settings.container_width }}px;
-  --section-gap:        {{ settings.section_vertical_gap }}px;
-}
+{% comment %}css-variables.liquid — KB-v3 design tokens{% endcomment %}
+{% style %}
+  :root {
+    --page-width:   {{ settings.max_page_width }};
+    --page-margin:  {{ settings.min_page_margin }}px;
+    --font-heading: 'Lilita One', cursive;
+    --font-body:    'Karla', sans-serif;
+    --color-pink:   {{ settings.color_brand_pink }};
+    --color-green:  {{ settings.color_brand_green }};
+    --color-orange: {{ settings.color_brand_orange }};
+    --color-yellow: {{ settings.color_brand_yellow }};
+    --color-ink:    {{ settings.color_ink }};
+    --color-body:   {{ settings.color_body }};
+    --color-muted:  {{ settings.color_muted }};
+    --color-cream:  {{ settings.color_cream }};
+    --color-line:   {{ settings.color_line }};
+    --radius-sm:    8px;
+    --radius-md:    16px;
+    --radius-lg:    24px;
+    --radius-pill:  999px;
+  }
+{% endstyle %}
