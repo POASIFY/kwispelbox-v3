@@ -118,7 +118,8 @@
             "cta_label": "",
             "mini_banner_label": "Nieuw binnen!",
             "mini_banner_sub": "Ontdek de nieuwste favorieten",
-            "mini_banner_url": "/collections/nieuw"
+            "mini_banner_url": "/collections/nieuw",
+            "col_order": 10
           }
         },
         "col_club": {
@@ -131,7 +132,8 @@
             "icon": "icon-paw.svg",
             "show_link_icons": true,
             "link_list": "menu-kwispelclub",
-            "cta_label": ""
+            "cta_label": "",
+            "col_order": 11
           }
         },
         "trust_1": {
@@ -173,6 +175,96 @@
             "subtitle": "4,9/5",
             "icon": "icon-star.svg"
           }
+        },
+        "li_shop_1": {
+          "type": "link_item",
+          "settings": {
+            "col_index": 10,
+            "label": "Speeltjes",
+            "url": "/collections/speeltjes",
+            "icon": "paw"
+          }
+        },
+        "li_shop_2": {
+          "type": "link_item",
+          "settings": {
+            "col_index": 10,
+            "label": "Knuffels",
+            "url": "/collections/knuffels",
+            "icon": "heart"
+          }
+        },
+        "li_shop_3": {
+          "type": "link_item",
+          "settings": {
+            "col_index": 10,
+            "label": "Snacks",
+            "url": "/collections/snacks",
+            "icon": "bone"
+          }
+        },
+        "li_shop_4": {
+          "type": "link_item",
+          "settings": {
+            "col_index": 10,
+            "label": "Puppy favorieten",
+            "url": "/collections/puppy",
+            "icon": "sparkles"
+          }
+        },
+        "li_club_1": {
+          "type": "link_item",
+          "settings": {
+            "col_index": 11,
+            "label": "Word gratis lid",
+            "url": "/pages/kwispelclub",
+            "icon": "gift"
+          }
+        },
+        "li_club_2": {
+          "type": "link_item",
+          "settings": {
+            "col_index": 11,
+            "label": "Kwispels sparen",
+            "url": "/pages/kwispels-sparen",
+            "icon": "star"
+          }
+        },
+        "li_club_3": {
+          "type": "link_item",
+          "settings": {
+            "col_index": 11,
+            "label": "Exclusieve kortingen",
+            "url": "/pages/kortingen",
+            "icon": "shield"
+          }
+        },
+        "li_club_4": {
+          "type": "link_item",
+          "settings": {
+            "col_index": 11,
+            "label": "Hond van de maand",
+            "url": "/pages/hond-van-de-maand",
+            "icon": "camera"
+          }
+        },
+        "li_club_5": {
+          "type": "link_item",
+          "settings": {
+            "col_index": 11,
+            "label": "Verjaardagsvoordelen",
+            "url": "/pages/verjaardag",
+            "icon": "cake"
+          }
+        },
+        "li_club_6": {
+          "type": "link_item",
+          "settings": {
+            "col_index": 11,
+            "label": "Clubnieuws",
+            "url": "/pages/clubnieuws",
+            "icon": "sparkles"
+          }
         }
       },
       "block_order": [
@@ -187,7 +279,17 @@
         "trust_2",
         "trust_3",
         "trust_4",
-        "trust_5"
+        "trust_5",
+        "li_shop_1",
+        "li_shop_2",
+        "li_shop_3",
+        "li_shop_4",
+        "li_club_1",
+        "li_club_2",
+        "li_club_3",
+        "li_club_4",
+        "li_club_5",
+        "li_club_6"
       ],
       "settings": {
         "logo_width": 160,
